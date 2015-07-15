@@ -40,6 +40,30 @@ function log {
 echo "$(date +%T) $@"
 }
 
+funny_dots() {
+
+
+ I=0
+ REPEATS=$1
+ SLEEP=$2
+# EXT_SHELL=`ps -p $$ -o comm=|awk '{n=split($1,tt,"/"); print tt[n];}'`
+ if [ "$EXT_SHELL" == "bash" ]; then
+  ECHONOLINE="echo -n -e  \0 ."
+  ECHOLAST="echo -e \n"
+ else
+  ECHONOLINE="echo  \0 .\c"
+  ECHOLAST="echo \n"
+ fi
+ sleep $SLEEP
+ while [ $I -lt $REPEATS ]
+  do
+    $ECHONOLINE
+    let "I+=1"
+    sleep $SLEEP
+  done
+ $ECHOLAST
+}
+
 #----------------------------------------------------------------#
 # not used from this point below
 #----------------------------------------------------------------#
