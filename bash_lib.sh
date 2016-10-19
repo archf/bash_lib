@@ -30,7 +30,7 @@ is_user_root() {
 # making sure user is running as root
 if [ "$UID" != "0" ]
 then
-   echo "Must be root to run this script , type su to change to root."
+   echo "Must be root to run this script, type su to change to root."
    exit 1
 fi
 }
@@ -40,8 +40,49 @@ function log {
 echo "$(date +%T) $@"
 }
 
-funny_dots() {
+debug()
+{
+	if [ -n "$debug" ]; then
+		printf "%s\n" "$*" >&2
+	fi
+}
 
+version()
+{
+	if [ -n "$version" ]; then
+		printf "%s\n" "$*"
+  fi
+  exit 0
+}
+
+progress()
+{
+	if [ -z "$quiet" ]; then
+		printf "%s\r" "$*" >&2
+	fi
+}
+
+die () {
+	die_with_status 1 "$@"
+}
+
+die_with_status () {
+	status=$1
+	shift
+	printf >&2 '%s\n' "$*"
+	exit "$status"
+}
+
+assert()
+{
+	if "$@"; then
+		:
+	else
+		die "assertion failed: " "$@"
+	fi
+}
+
+funny_dots() {
 
  I=0
  REPEATS=$1
@@ -154,12 +195,3 @@ assert_num_args() {
         exit $WRONG_NUMBER_OF_ARGUMENTS_ERROR
     fi
 }
-
-#ARGCOUNT=1                     # At least 1 arg is required.
-#if [ $# -lt "$ARGCOUNT" ]
-#then
-#    echo "`date +"%b %d %H:%M:%S"` $HOST: ERREUR, passer en argument au moins un nom de zone"| tee -a $RUN_LOG
-#    usage
-#    exit
-#    #exit $E_WRONGARGS
-#fi
